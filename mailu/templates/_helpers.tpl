@@ -48,11 +48,22 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "mailu.labels" -}}
-app.kubernetes.io/name: {{ include "mailu.name" . }}
 helm.sh/chart: {{ include "mailu.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/managed-by: Terraform-{{ .Release.Service }}
+app.kubernetes.io/part-of: "apps"
+app: {{ include "mailu.fullname" . }}
+# version: {{ .Chart.AppVersion | quote }}
+{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "mailu.selectorLabels" -}}
+# app.kubernetes.io/name: {{ include "mailu.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ include "mailu.fullname" . }}
 {{- end -}}

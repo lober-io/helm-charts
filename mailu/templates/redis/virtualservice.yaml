@@ -1,0 +1,25 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-redis
+  labels:
+    component: redis
+    {{- include "mailu.labels" . | nindent 4 }}
+
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-redis.{{ .Release.Namespace }}.svc.cluster.local  
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh
+  tcp:
+  - match:
+    - port: 6379
+    route:
+    - destination:
+        host: {{ $fullName }}-redis
+        port:
+          number: 6379
+{{- end}}

@@ -11,13 +11,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ include "mailu.fullname" . }}
+      {{- include "mailu.selectorLabels" . | nindent 6 }}  
       component: dovecot
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ include "mailu.fullname" . }}
+        {{- include "mailu.labels" . | nindent 8 }}
         component: dovecot
     spec:
       {{- with .Values.nodeSelector }}
@@ -46,31 +46,11 @@ spec:
         env:
           - name: LOG_LEVEL
             value: {{ default .Values.logLevel .Values.dovecot.logLevel }}
-          - name: FRONT_ADDRESS
-            value: {{ include "mailu.fullname" . }}-front
-          - name: ADMIN_ADDRESS
-            value: {{ include "mailu.fullname" . }}-admin
-          - name: ANTISPAM_WEBUI_ADDRESS
-            value: {{ include "mailu.fullname" . }}-rspamd:11334
-          - name: POSTMASTER
-            value: postmaster
-          - name: DOMAIN
-            value: "{{ required "domain" .Values.domain }}"
-          - name: HOSTNAMES
-            value: "{{ join "," .Values.hostnames }}"
-          - name: RECIPIENT_DELIMITER
-            value: +
-          # TODO: COMPRESSION / COMPRESS_LEVEL -> documentation?
-
-          # TODO: next entries should be removed when https://github.com/Mailu/Mailu/issues/1112 is fixed
-          - name: REDIS_ADDRESS
-            value: {{ include "mailu.fullname" . }}-redis
-          - name: WEBMAIL
-            value: none
-          - name: SECRET_KEY
-            value: "{{ required "secretKey" .Values.secretKey }}"
+        envFrom:
+          - configMapRef:
+              name: mailu-config
         ports:
-          - name: auth
+          - name: tcp-auth
             containerPort: 2102
             protocol: TCP
           - name: lmtp
@@ -117,32 +97,3 @@ spec:
       maxUnavailable: 0
       maxSurge: 1
 
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "mailu.fullname" . }}-dovecot
-  labels:
-    app: {{ include "mailu.fullname" . }}
-    component: dovecot
-spec:
-  selector:
-    app: {{ include "mailu.fullname" . }}
-    component: dovecot
-  ports:
-  - name: imap-auth
-    port: 2102
-    protocol: TCP
-  - name: imap-transport
-    port: 2525
-    protocol: TCP
-  - name: imap-default
-    port: 143
-    protocol: TCP
-  - name: pop3
-    port: 110
-    protocol: TCP
-  - name: sieve
-    port: 4190
-    protocol: TCP

@@ -1,0 +1,25 @@
+{{- if .Values.roundcube.enabled }}
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-roundcube
+  labels:
+    component: roundcube
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-roundcube.{{ .Release.Namespace }}.svc.cluster.local
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh           
+  http:
+  - name: "roundcube-services"
+    route:
+    - destination:
+        host: {{ $fullName }}-roundcube
+        port:
+          number: 80
+{{- end}}
+
+

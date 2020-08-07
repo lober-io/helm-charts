@@ -13,13 +13,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ include "mailu.fullname" . }}
+      {{- include "mailu.selectorLabels" . | nindent 6 }}  
       component: roundcube
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ include "mailu.fullname" . }}
+        {{- include "mailu.labels" . | nindent 8 }}
         component: roundcube
     spec:
       {{- with .Values.nodeSelector }}
@@ -43,36 +43,11 @@ spec:
             name: data
             subPath: roundcube
         env:
-          - name: MESSAGE_SIZE_LIMIT
-            value: "{{ mul .Values.mail.messageSizeLimitInMegabytes (mul 1024 1024) }}"
-          - name: IMAP_ADDRESS
-            value: {{ include "mailu.fullname" . }}-dovecot
-          - name: FRONT_ADDRESS
-            value: {{ include "mailu.fullname" . }}-front
-          - name: SECRET_KEY
-            value: "{{ required "secretKey" .Values.secretKey }}"
-          - name: SUBNET
-            value: {{ .Values.subnet }}
-          {{- if eq .Values.database.roundcubeType "sqlite" }}
-          - name: ROUNDCUBE_DB_FLAVOR
-            value: sqlite
-          {{- else if eq .Values.database.roundcubeType "mysql" }}
-          - name: ROUNDCUBE_DB_FLAVOR
-            value: mysql
-          - name: ROUNDCUBE_DB_USER
-            value: {{ required "database.mysql.roundcubeUser" .Values.database.mysql.roundcubeUser }}
-          - name: ROUNDCUBE_DB_PW
-            value: {{ required "database.mysql.roundcubePassword" .Values.database.mysql.roundcubePassword }}
-          - name: ROUNDCUBE_DB_NAME
-            value: {{ required "database.mysql.roundcubeDatabase" .Values.database.mysql.roundcubeDatabase }}
-          - name: ROUNDCUBE_DB_HOST
-            {{- if .Values.database.mysql.host }}
-            value: {{ .Values.database.mysql.host }}
-            {{- end }}
-            value: {{ include "mailu.fullname" . }}-mysql
-          {{- else }}
-          value: {{ required "database.type must be one of sqlite/mysql" .None }}
-          {{- end }}
+          - name: LOG_LEVEL
+            value: {{ default .Values.logLevel .Values.roundcube.logLevel }}
+        envFrom:
+          - configMapRef:
+              name: mailu-config  
         ports:
           - name: http
             containerPort: 80
@@ -103,22 +78,5 @@ spec:
     rollingUpdate:
       maxUnavailable: 0
       maxSurge: 1
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "mailu.fullname" . }}-roundcube
-  labels:
-    app: {{ include "mailu.fullname" . }}
-    component: roundcube
-spec:
-  selector:
-    app: {{ include "mailu.fullname" . }}
-    component: roundcube
-  ports:
-  - name: http
-    port: 80
-    protocol: TCP
 
 {{- end }}

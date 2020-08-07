@@ -1,0 +1,13 @@
+{{- $_ := set . "overwritePostfixCf" "postfix.cf" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mailu.fullname" . }}-overwrite
+  labels:
+  {{- include "mailu.labels" . | nindent 4 }}
+data:
+  # language=BASH
+  {{ .overwritePostfixCf }}: |-
+    mynetworks = ""
+    
+    

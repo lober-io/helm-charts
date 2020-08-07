@@ -1,0 +1,23 @@
+# This file is derived from https://github.com/Mailu/Mailu/blob/master/docs/kubernetes/mailu/webdav.yaml
+
+{{- if .Values.webdav.enabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailu.fullname" . }}-webdav
+  labels:
+    component: webdav
+    {{- include "mailu.labels" . | nindent 4 }}    
+spec:
+  selector:
+    {{- include "mailu.selectorLabels" . | nindent 4 }}  
+    component: webdav
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 5232
+    protocol: TCP
+
+
+{{- end }}

@@ -1,0 +1,25 @@
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-admin
+  labels:
+    component: admin
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-admin.{{ .Release.Namespace }}.svc.cluster.local
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh           
+  http:
+  - name: "admin-services"
+    route:
+    - destination:
+        host: {{ $fullName }}-admin
+        port:
+          number: 80
+
+
+
+   

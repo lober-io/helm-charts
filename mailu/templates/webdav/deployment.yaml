@@ -13,13 +13,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ include "mailu.fullname" . }}
+      {{- include "mailu.selectorLabels" . | nindent 6 }}  
       component: webdav
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ include "mailu.fullname" . }}
+        {{- include "mailu.labels" . | nindent 8 }}
         component: webdav
     spec:
       {{- with .Values.nodeSelector }}
@@ -72,22 +72,5 @@ spec:
     rollingUpdate:
       maxUnavailable: 0
       maxSurge: 1
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "mailu.fullname" . }}-webdav
-  labels:
-    app: {{ include "mailu.fullname" . }}
-    component: webdav
-spec:
-  selector:
-    app: {{ include "mailu.fullname" . }}
-    component: webdav
-  ports:
-  - name: http
-    port: 5232
-    protocol: TCP
 
 {{- end }}

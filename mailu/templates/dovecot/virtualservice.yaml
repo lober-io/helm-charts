@@ -1,0 +1,50 @@
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-dovecot
+  labels:
+    component: dovecot
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-dovecot.{{ .Release.Namespace }}.svc.cluster.local
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh
+  tcp:
+  - match:
+    - port: 2102
+    route:
+    - destination:
+        host: {{ $fullName }}-dovecot
+        port:
+          number: 2102
+  - match:
+    - port: 2525
+    route:
+    - destination:
+        host: {{ $fullName }}-dovecot
+        port:
+          number: 2525
+  - match:
+    - port: 143
+    route:
+    - destination:
+        host: {{ $fullName }}-dovecot
+        port:
+          number: 143
+  - match:
+    - port: 110
+    route:
+    - destination:
+        host: {{ $fullName }}-dovecot
+        port:
+          number: 110
+  - match:
+    - port: 4190
+    route:
+    - destination:
+        host: {{ $fullName }}-dovecot
+        port:
+          number: 4190

@@ -1,0 +1,27 @@
+{{- if .Values.webdav.enabled }}
+
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-webdav-internal
+  labels:
+    component: webdav
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-webdav.{{ .Release.Namespace }}.svc.cluster.local
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh 
+  http:
+  - name: tcp-webdav-http
+    match:
+    - port: 5232
+    route:
+    - destination:
+        host: {{ $fullName }}-webdav
+        port:
+          number: 5232
+
+{{- end }}

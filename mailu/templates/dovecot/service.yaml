@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailu.fullname" . }}-dovecot
+  labels:
+    {{- include "mailu.labels" . | nindent 4 }}    
+    component: dovecot
+spec:
+  selector:
+    {{- include "mailu.selectorLabels" . | nindent 4 }}  
+    component: dovecot
+  type: ClusterIP
+  ports:
+  - name: tcp-imap-auth
+    port: 2102
+    protocol: TCP
+  - name: tcp-imap-transport
+    port: 2525
+    protocol: TCP
+  - name: tcp-imap-default
+    port: 143
+    protocol: TCP
+  - name: tcp-pop3
+    port: 110
+    protocol: TCP
+  - name: tcp-sieve
+    port: 4190
+    protocol: TCP

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailu.fullname" . }}-rspamd
+  labels:
+    {{- include "mailu.labels" . | nindent 4 }}    
+    component: rspamd
+spec:
+  selector:
+    {{- include "mailu.selectorLabels" . | nindent 4 }}  
+    component: rspamd
+  type: ClusterIP
+  ports:
+  - name: tcp-rspamd
+    port: 11332
+    protocol: TCP
+  - name: tcp-rspamd-http
+    protocol: TCP
+    port: 11334

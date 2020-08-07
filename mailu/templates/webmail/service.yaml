@@ -1,0 +1,19 @@
+{{- if .Values.roundcube.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailu.fullname" . }}-roundcube
+  labels:
+    {{- include "mailu.labels" . | nindent 4 }}    
+    component: roundcube
+spec:
+  selector:
+    {{- include "mailu.selectorLabels" . | nindent 4 }}  
+    component: roundcube
+  type: ClusterIP    
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+{{- end }}

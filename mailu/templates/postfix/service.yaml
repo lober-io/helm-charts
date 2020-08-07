@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailu.fullname" . }}-postfix
+  labels:
+    {{- include "mailu.labels" . | nindent 4 }}
+    component: postfix
+spec:
+  selector:
+    {{- include "mailu.selectorLabels" . | nindent 4 }}  
+    component: postfix
+  type: ClusterIP
+  ports:
+  - name: tcp-smtp
+    port: 25
+    protocol: TCP
+  - name: tcp-smtp-ssl
+    port: 465
+    protocol: TCP
+  - name: tcp-smtp-starttls
+    port: 587
+    protocol: TCP
+  - name: tcp-smtp-auth
+    port: 10025
+    protocol: TCP

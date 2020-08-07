@@ -1,0 +1,43 @@
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-postfix
+  labels:
+    component: postfix
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-postfix.{{ .Release.Namespace }}.svc.cluster.local
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh
+  tcp:
+  - match:
+    - port: 25
+    route:
+    - destination:
+        host: {{ $fullName }}-postfix
+        port:
+          number: 25
+  - match:
+    - port: 465
+    route:
+    - destination:
+        host: {{ $fullName }}-postfix
+        port:
+          number: 465
+  - match:
+    - port: 587
+    route:
+    - destination:
+        host: {{ $fullName }}-postfix
+        port:
+          number: 587
+  - match:
+    - port: 10025
+    route:
+    - destination:
+        host: {{ $fullName }}-postfix
+        port:
+          number: 10025

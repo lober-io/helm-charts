@@ -1,0 +1,188 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-front-external
+  labels:
+    component: front
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+  {{- range .Values.hostnames }}
+    - {{ . }}
+  {{- end}}
+  gateways:
+    # Gateways in other namespaces may be referred to by <gateway namespace>/<gateway name>
+    - istio-system/ingressgateway
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh           
+  http:
+  - name: "admin-redirect"
+    match:
+    - uri:
+        prefix: /admin 
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 80
+  - name: "webmail-route"
+    match:
+    - uri:
+        prefix: /
+    route:
+        - destination:
+            host: {{ $fullName }}-roundcube
+            port:
+              number: 80
+  - name: "admin-antispam"
+    match:
+    - uri:
+        prefix: /admin/antispam
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 80
+{{- if .Values.webdav.enabled }}          
+  - name: "webdav"
+    match:
+    - port: 5232
+    route:
+        - destination:
+            host: {{ $fullName }}-front
+            port:
+              number: 5232 
+{{- end }}
+  tcp:
+  - match:
+    - port: 143
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 143
+  - match:
+    - port: 995
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 995          
+  - match:
+    - port: 110
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 110              
+  - match:
+    - port: 25
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 25
+  - match:
+    - port: 10025
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 10025
+  - match:
+    - port: 10143
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 10143
+  - match:
+    - port: 465
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 465
+  - match:
+    - port: 587
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 587        
+{{- end}}
+
+---
+{{- $fullName := include "mailu.fullname" . -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ $fullName }}-front-internal
+  labels:
+    component: front
+    {{- include "mailu.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ include "mailu.fullname" . }}-front.{{ .Release.Namespace }}.svc.cluster.local
+  gateways:
+    # The reserved word mesh is used to imply all the sidecars in the mesh
+    - mesh           
+  http:
+  - name: "web"
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 80       
+  tcp:
+  - match:
+    - port: 8000
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 8000
+  - match:
+    - port: 143
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 143
+  - match:
+    - port: 110
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 110
+  - match:
+    - port: 25
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 25
+  - match:
+    - port: 465
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 465
+  - match:
+    - port: 587
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 587
+  - match:
+    - port: 10025
+    route:
+    - destination:
+        host: {{ $fullName }}-front
+        port:
+          number: 10025

@@ -1,19 +1,5 @@
 {{ if and (or (eq .Values.database.type "mysql") (eq .Values.database.roundcubeType "mysql")) (not .Values.database.mysql.host) }}
 
-{{ if (eq .Values.database.roundcubeType "mysql") }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "mailu.fullname" . }}-mysql-init
-data:
-  extra.sql: >
-    CREATE DATABASE IF NOT EXISTS {{ required "database.mysql.roundcubeDatabase" .Values.database.mysql.roundcubeDatabase }};
-    GRANT ALL ON {{ required "database.mysql.roundcubeDatabase" .Values.database.mysql.roundcubeDatabase }}.* TO
-      '{{ required "database.mysql.roundcubeUser" .Values.database.mysql.roundcubeUser }}'@'%'
-      IDENTIFIED BY '{{ required "database.mysql.roundcubePassword" .Values.database.mysql.roundcubePassword }}';
-{{ end }}
----
-
 {{ if .Capabilities.APIVersions.Has "apps/v1/Deployment" }}
 apiVersion: apps/v1
 {{ else }}
@@ -26,12 +12,12 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ include "mailu.fullname" . }}
+      {{- include "mailu.selectorLabels" . | nindent 6 }}  
       component: mysql
   template:
     metadata:
       labels:
-        app: {{ include "mailu.fullname" . }}
+        {{- include "mailu.labels" . | nindent 8 }}
         component: mysql
     spec:
       {{- with .Values.nodeSelector }}
@@ -117,23 +103,5 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
       maxSurge: 0
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "mailu.fullname" . }}-mysql
-  labels:
-    app: {{ include "mailu.fullname" . }}
-    component: mysql
-spec:
-  selector:
-    app: {{ include "mailu.fullname" . }}
-    component: mysql
-  ports:
-  - name: mysql
-    port: 3306
-    protocol: TCP
 
 {{ end }}

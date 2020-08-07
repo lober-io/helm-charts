@@ -8,6 +8,8 @@
 # The mail domain is required. See https://github.com/Mailu/Mailu/blob/master/docs/faq.rst#what-is-the-difference-between-domain-and-hostnames
 #domain: example.com
 
+postmaster: "admin"
+
 # The secret key is required for protecting authentication cookies and must be set individually for each deployment
 # secretKey: chang3m3!
 
@@ -73,8 +75,9 @@ persistence:
   #claimNameOverride: my-claim-name
 
 # Change this if you're using different address ranges for pods
-subnet: 10.42.0.0/16
-
+# subnet: 10.244.0.0/24
+subnet: 127.0.0.0/24
+podSubnet: 127.0.0.0/24
 # Version of mailu docker images to use when not specified otherwise
 mailuVersion: master
 
@@ -90,16 +93,23 @@ certmanager:
   issuerType: ClusterIssuer
   issuerName: letsencrypt
 
+
 # Set ingress and loadbalancer config
 ingress:
-  externalIngress: true
-  tlsFlavor: cert
+  enabled: true
+  externalIngress: false
+  tlsFlavor: notls
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
 
+webmail:
+  enabled: true
+  type: roundcube
+  url: "/webmail"
+
 # Frontend load balancer for non-HTTP(s) services
 front:
-  # logLevel: WARNING
+  logLevel: DEBUG
   image:
     repository: mailu/nginx
     # tag defaults to mailuVersion
@@ -113,7 +123,8 @@ front:
       cpu: 200m
 
 admin:
-  # logLevel: WARNING
+  logLevel: DEBUG
+  url: "/admin"
   image:
     repository: mailu/admin
     # tag defaults to mailuVersion
@@ -139,7 +150,7 @@ redis:
       cpu: 200m
 
 postfix:
-  # logLevel: WARNING
+  logLevel: DEBUG
   image:
     repository: mailu/postfix
     # tag defaults to mailuVersion
@@ -153,7 +164,7 @@ postfix:
       cpu: 500m
 
 dovecot:
-  # logLevel: WARNING
+  logLevel: DEBUG
   image:
     repository: mailu/dovecot
     # tag defaults to mailuVersion
@@ -167,7 +178,7 @@ dovecot:
       cpu: 500m
 
 rspamd:
-  # logLevel: WARNING
+  logLevel: DEBUG
   image:
     repository: mailu/rspamd
     # tag defaults to mailuVersion
@@ -197,7 +208,7 @@ clamav:
 
 roundcube:
   enabled: true
-  # logLevel: WARNING
+  logLevel: DEBUG
   image:
     repository: mailu/roundcube
     # tag defaults to mailuVersion

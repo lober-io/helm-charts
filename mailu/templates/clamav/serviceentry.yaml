@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: {{ include "mailu.fullname" . }}-clamav-remote
+  labels:
+    {{- include "mailu.labels" . | nindent 4 }}    
+    component: clamav
+spec:
+  hosts:
+      - "*.clamav.net"
+  ports:
+      - number: 443
+        name: https
+        protocol: TLS
+  resolution: NONE
+  location: MESH_EXTERNAL
