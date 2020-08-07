@@ -105,7 +105,7 @@ ingress:
 webmail:
   enabled: true
   type: roundcube
-  url: "/webmail"
+  url: "/"
 
 # Frontend load balancer for non-HTTP(s) services
 front:
@@ -114,13 +114,13 @@ front:
     repository: mailu/nginx
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests: 
-      memory: 100Mi
-      cpu: 100m
-    limits:
-      memory: 200Mi
-      cpu: 200m
+  # resources:
+  #   requests: 
+  #     memory: 100Mi
+  #     cpu: 100m
+  #   limits:
+  #     memory: 200Mi
+  #     cpu: 200m
 
 admin:
   logLevel: DEBUG
@@ -129,25 +129,25 @@ admin:
     repository: mailu/admin
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests:
-      memory: 500Mi
-      cpu: 500m
-    limits:
-      memory: 500Mi
-      cpu: 500m
+  # resources:
+  #   requests:
+  #     memory: 500Mi
+  #     cpu: 500m
+  #   limits:
+  #     memory: 500Mi
+  #     cpu: 500m
 
 redis:
   image:
     repository: redis
     tag: 5-alpine
-  resources:
-    requests:
-      memory: 200Mi
-      cpu: 100m
-    limits:
-      memory: 300Mi
-      cpu: 200m
+  # resources:
+  #   requests:
+  #     memory: 200Mi
+  #     cpu: 100m
+  #   limits:
+  #     memory: 300Mi
+  #     cpu: 200m
 
 postfix:
   logLevel: DEBUG
@@ -155,13 +155,13 @@ postfix:
     repository: mailu/postfix
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests:
-      memory: 2Gi
-      cpu: 500m
-    limits:
-      memory: 2Gi
-      cpu: 500m
+  # resources:
+  #   requests:
+  #     memory: 2Gi
+  #     cpu: 500m
+  #   limits:
+  #     memory: 2Gi
+  #     cpu: 500m
 
 dovecot:
   logLevel: DEBUG
@@ -169,13 +169,13 @@ dovecot:
     repository: mailu/dovecot
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests:
-      memory: 500Mi
-      cpu: 500m
-    limits:
-      memory: 500Mi
-      cpu: 500m
+  # resources:
+  #   requests:
+  #     memory: 500Mi
+  #     cpu: 500m
+  #   limits:
+  #     memory: 500Mi
+  #     cpu: 500m
 
 rspamd:
   logLevel: DEBUG
@@ -183,13 +183,13 @@ rspamd:
     repository: mailu/rspamd
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests:
-      memory: 100Mi
-      cpu: 100m
-    limits:
-      memory: 200Mi
-      cpu: 200m
+  # resources:
+  #   requests:
+  #     memory: 100Mi
+  #     cpu: 100m
+  #   limits:
+  #     memory: 200Mi
+  #     cpu: 200m
 
 clamav:
   enabled: true
@@ -198,13 +198,13 @@ clamav:
     repository: mailu/clamav
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests:
-      memory: 1Gi
-      cpu: 1000m
-    limits:
-      memory: 2Gi
-      cpu: 1000m
+  # resources:
+  #   requests:
+  #     memory: 1Gi
+  #     cpu: 1000m
+  #   limits:
+  #     memory: 2Gi
+  #     cpu: 1000m
 
 roundcube:
   enabled: true
@@ -213,13 +213,13 @@ roundcube:
     repository: mailu/roundcube
     # tag defaults to mailuVersion
     # tag: master
-  resources:
-    requests:
-      memory: 100Mi
-      cpu: 100m
-    limits:
-      memory: 200Mi
-      cpu: 200m
+  # resources:
+  #   requests:
+  #     memory: 100Mi
+  #     cpu: 100m
+  #   limits:
+  #     memory: 200Mi
+  #     cpu: 200m
 
 
 webdav:
@@ -234,10 +234,10 @@ mysql:
   image:
     repository: library/mariadb
     tag: 10.4.10
-  resources:
-    requests:
-      memory: 256Mi
-      cpu: 100m
-    limits:
-      memory: 512Mi
-      cpu: 200m
+  # resources:
+  #   requests:
+  #     memory: 256Mi
+  #     cpu: 100m
+  #   limits:
+  #     memory: 512Mi
+  #     cpu: 200m

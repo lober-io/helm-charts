@@ -15,36 +15,19 @@ spec:
   gateways:
     # Gateways in other namespaces may be referred to by <gateway namespace>/<gateway name>
     - istio-system/ingressgateway
-    # The reserved word mesh is used to imply all the sidecars in the mesh
-    - mesh           
   http:
-  - name: "admin-redirect"
+  - name: "webmail-redirect"
     match:
     - uri:
-        prefix: /admin 
+        exact: /
+    redirect:
+      uri: /webmail  
+  - name: "web"
     route:
     - destination:
         host: {{ $fullName }}-front
         port:
-          number: 80
-  - name: "webmail-route"
-    match:
-    - uri:
-        prefix: /
-    route:
-        - destination:
-            host: {{ $fullName }}-roundcube
-            port:
-              number: 80
-  - name: "admin-antispam"
-    match:
-    - uri:
-        prefix: /admin/antispam
-    route:
-    - destination:
-        host: {{ $fullName }}-front
-        port:
-          number: 80
+          number: 80  
 {{- if .Values.webdav.enabled }}          
   - name: "webdav"
     match:
