@@ -21,7 +21,7 @@ spec:
     - uri:
         exact: /
     redirect:
-      uri: /webmail  
+      uri: /webmail
   - name: "web"
     route:
     - destination:

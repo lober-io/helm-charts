@@ -159,7 +159,7 @@ data:
     {{- end }}
     # Path to the admin interface if enabled
     # Kubernetes addition: You need to change ALL the ingresses, when you want this URL to be different!!!
-    # WEB_ADMIN: {{ .Values.admin.url }} 
+    WEB_ADMIN: {{ .Values.admin.url }} 
 
     # Path to the webmail if enabled
     # Currently, this is not used, because we intended to use a different subdomain: webmail.example.com

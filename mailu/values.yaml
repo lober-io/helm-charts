@@ -105,7 +105,7 @@ ingress:
 webmail:
   enabled: true
   type: roundcube
-  url: "/"
+  url: "/webmail"
 
 # Frontend load balancer for non-HTTP(s) services
 front:
